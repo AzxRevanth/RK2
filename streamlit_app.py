@@ -49,7 +49,8 @@ if action == "DATA VIEWING":
             due_students_df[['Student Name', 'Grade', 'Date of Joining', 'Subject', 'Fees', 'Amount Paid', 'Fee Due Date']]
         )
 
-elif action == "DATA ENTRY":
+# Based on the selected action, display the relevant information
+if action == "DATA ENTRY":
     # Display the original data
     st.header('ORIGINAL DATA')
     st.dataframe(existing_data)
@@ -78,19 +79,24 @@ elif action == "DATA ENTRY":
         submit_button = st.form_submit_button(label="Submit Vendor Details")
 
     if submit_button:
+        # Ensure 'Date of Joining' is treated as datetime
+        date_of_joining = pd.to_datetime(date_of_joining)
+
         # Update the DataFrame with new data
         new_data = {
-            'AdminNo': [AdminNo],
-            'Student Name': [student_name],
-            'Grade': [grade],
-            'Date of Joining': [pd.to_datetime(date_of_joining)],  # Convert to datetime
-            'Subject': [subject],
-            'Fees': [fees],
-            'Amount Paid': [amount_paid],
+            'AdminNo': AdminNo,
+            'Student Name': student_name,
+            'Grade': grade,
+            'Date of Joining': date_of_joining,
+            'Subject': subject,
+            'Fees': fees,
+            'Amount Paid': amount_paid,
         }
 
-        new_df = pd.DataFrame(new_data)
-        existing_data = pd.concat([existing_data, new_df], ignore_index=True)
+        existing_data = existing_data.append(new_data, ignore_index=True)
+
+        # Save the modified DataFrame back to Google Sheets
+        conn.write(existing_data, worksheet="Sheet1")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
@@ -98,12 +104,9 @@ elif action == "DATA ENTRY":
 
         # Convert 'Date of Joining' to string before displaying
         df_display = existing_data.copy()
-        df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime(
-            '%Y-%m-%d'
-        )
+        df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
         st.dataframe(df_display)
-
 
 
 
