@@ -79,7 +79,7 @@ if submit_button:
     existing_data["Student Name"] = existing_data["Student Name"].astype(str)
 
     # Check if a student with the same name already exists
-    elif existing_data["Student Name"].str.contains(student_name).any():
+    if existing_data["Student Name"].str.contains(student_name).any():
         st.warning("A student with this name already exists.")
         st.stop()
     else:
