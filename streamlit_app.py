@@ -79,10 +79,11 @@ if submit_button:
     existing_data["Student Name"] = existing_data["Student Name"].astype(str)
 
     # Check if a student with the same name already exists
-    elif existing_data["Student Name"].str.contains(student_name).any():
+elif:
+    existing_data["Student Name"].str.contains(student_name).any():
         st.warning("A student with this name already exists.")
         st.stop()
-    else:
+else:
         # Ensure 'Date of Joining' is treated as datetime
         date_of_joining = pd.to_datetime(date_of_joining)
 
