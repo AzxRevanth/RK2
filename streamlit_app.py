@@ -66,7 +66,7 @@ with st.form(key='my_form'):
     st.markdown("**required*")
 
     # st.form_submit_button should be used inside the st.form() context
-    submit_button = st.form_submit_button(label="Submit Vendor Details")
+    submit_button = st.form_submit_button(label="Submit Students Details")
 
 # If the submit button is pressed
 if submit_button:
@@ -74,6 +74,11 @@ if submit_button:
     if not AdminNo or not student_name or not grade or not date_of_joining or not subject or not fees or not amount_paid:
         st.warning("Ensure all mandatory fields are filled.")
         st.stop()
+    
+    # Convert "Student Name" column to string for checking duplicates
+    existing_data["Student Name"] = existing_data["Student Name"].astype(str)
+
+    # Check if a student with the same name already exists
     elif existing_data["Student Name"].str.contains(student_name).any():
         st.warning("A student with this name already exists.")
         st.stop()
@@ -107,6 +112,7 @@ if submit_button:
         df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
         st.dataframe(df_display)
+
 
 elif action == "UPDATE EXISTING ENTRY":
     # Display the original data
