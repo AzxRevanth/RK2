@@ -165,7 +165,7 @@ if 'Date of Joining' in df_display.columns and pd.api.types.is_datetime64_any_dt
     df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
 
-        st.dataframe(df_display)
+    st.dataframe(df_display)
 
 elif action == "DELETE ENTRY":
     # Display the original data
