@@ -153,7 +153,7 @@ elif action == "UPDATE EXISTING ENTRY":
         existing_data.loc[existing_data['Student Name'] == student_to_update, 'Amount Paid'] = updated_amount_paid
 
         # Save the modified DataFrame back to Google Sheets
-        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
+        conn.update(data=existing_data, worksheet="Sheet1")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
@@ -192,7 +192,7 @@ elif action == "DELETE ENTRY":
         existing_data = existing_data[existing_data['Student Name'] != student_to_delete]
 
         # Save the modified DataFrame back to Google Sheets
-        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
+        conn.update(data=existing_data, worksheet="Sheet1")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
@@ -262,7 +262,7 @@ elif action == "FEES DUE NEXT MONTH":
         ] += pd.DateOffset(months=1)
 
         # Save the modified DataFrame back to Google Sheets
-        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
+        conn.update(data=existing_data, worksheet="Sheet1")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
