@@ -29,6 +29,7 @@ action = st.selectbox(
 if action == "DATA VIEWING":
     # Display the original data again
     st.header('DATA VIEWING')
+    st.dataframe(existing_data)
 
     # Ensure 'Date of Joining' is treated as datetime
     existing_data['Date of Joining'] = pd.to_datetime(existing_data['Date of Joining'])
