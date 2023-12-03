@@ -74,15 +74,15 @@ if submit_button:
     if not AdminNo or not student_name or not grade or not date_of_joining or not subject or not fees or not amount_paid:
         st.warning("Ensure all mandatory fields are filled.")
         st.stop()
-    
+
     # Convert "Student Name" column to string for checking duplicates
     existing_data["Student Name"] = existing_data["Student Name"].astype(str)
 
     # Check if a student with the same name already exists
-elif existing_data["Student Name"].str.contains(student_name).any():
+    elif existing_data["Student Name"].str.contains(student_name).any():
         st.warning("A student with this name already exists.")
         st.stop()
-else:
+    else:
         # Ensure 'Date of Joining' is treated as datetime
         date_of_joining = pd.to_datetime(date_of_joining)
 
@@ -112,7 +112,6 @@ else:
         df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
         st.dataframe(df_display)
-
 
 elif action == "UPDATE EXISTING ENTRY":
     # Display the original data
@@ -152,7 +151,7 @@ elif action == "UPDATE EXISTING ENTRY":
         existing_data.loc[existing_data['Student Name'] == student_to_update, 'Amount Paid'] = updated_amount_paid
 
         # Save the modified DataFrame back to Google Sheets
-        conn.write(existing_data, worksheet="Sheet1")
+        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
@@ -191,7 +190,7 @@ elif action == "DELETE ENTRY":
         existing_data = existing_data[existing_data['Student Name'] != student_to_delete]
 
         # Save the modified DataFrame back to Google Sheets
-        conn.write(existing_data, worksheet="Sheet1")
+        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
@@ -261,7 +260,7 @@ elif action == "FEES DUE NEXT MONTH":
         ] += pd.DateOffset(months=1)
 
         # Save the modified DataFrame back to Google Sheets
-        conn.write(existing_data, worksheet="Sheet1")
+        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
