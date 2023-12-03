@@ -13,9 +13,6 @@ conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 existing_data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
 existing_data = existing_data.dropna(how="all")
 
-# Set page configuration
-st.set_page_config('RK SIR STUDENTS')
-
 # Choose an Action
 action = st.selectbox(
     "Choose an Action",
