@@ -101,7 +101,7 @@ if submit_button:
         existing_data = pd.concat([existing_data, new_df], ignore_index=True)
 
         # Save the modified DataFrame back to Google Sheets
-        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
+        conn.update(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
