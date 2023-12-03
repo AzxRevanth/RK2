@@ -49,40 +49,39 @@ if action == "DATA VIEWING":
             due_students_df[['Student Name', 'Grade', 'Date of Joining', 'Subject', 'Fees', 'Amount Paid', 'Fee Due Date']]
         )
 
-# Based on the selected action, display the relevant information
-if action == "DATA ENTRY":
-    # Display the original data
-    st.header('ORIGINAL DATA')
-    st.dataframe(existing_data)
+# Take input for new data
+st.subheader('Enter New Data')
 
-    # Display the data entry form
-    st.header('DATA ENTRY')
-    st.markdown("Enter the details of the new student below.")
+# Use st.form() to wrap the form elements
+with st.form(key='my_form'):
+    AdminNo = st.text_input('Admission Number*')
+    student_name = st.text_input('Student Name*')
+    grade = st.text_input('Grade*')
+    date_of_joining = st.date_input('Date of Joining*')
+    subject = st.text_input('Subject*')
+    fees = st.number_input('Fees*')
+    amount_paid = st.number_input('Amount Paid*')
 
-    # Take input for new data
-    st.subheader('Enter New Data')
+    # Mark mandatory fields
+    st.markdown("**required*")
 
-    # Use st.form() to wrap the form elements
-    with st.form(key='my_form'):
-        AdminNo = st.text_input('Admission Number*')
-        student_name = st.text_input('Student Name*')
-        grade = st.text_input('Grade*')
-        date_of_joining = st.date_input('Date of Joining*')
-        subject = st.text_input('Subject*')
-        fees = st.number_input('Fees*')
-        amount_paid = st.number_input('Amount Paid*')
+    # st.form_submit_button should be used inside the st.form() context
+    submit_button = st.form_submit_button(label="Submit Vendor Details")
 
-        # Mark mandatory fields
-        st.markdown("**required*")
-
-        # st.form_submit_button should be used inside the st.form() context
-        submit_button = st.form_submit_button(label="Submit Vendor Details")
-
-    if submit_button:
+# If the submit button is pressed
+if submit_button:
+    # Check if all mandatory fields are filled
+    if not AdminNo or not student_name or not grade or not date_of_joining or not subject or not fees or not amount_paid:
+        st.warning("Ensure all mandatory fields are filled.")
+        st.stop()
+    elif existing_data["Student Name"].str.contains(student_name).any():
+        st.warning("A student with this name already exists.")
+        st.stop()
+    else:
         # Ensure 'Date of Joining' is treated as datetime
         date_of_joining = pd.to_datetime(date_of_joining)
 
-        # Update the DataFrame with new data
+        # Create a new row of student data
         new_data = {
             'AdminNo': [AdminNo],
             'Student Name': [student_name],
@@ -101,16 +100,13 @@ if action == "DATA ENTRY":
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
-        st.success("Vendor details successfully submitted!")
+        st.success("Student details successfully submitted!")
 
         # Convert 'Date of Joining' to string before displaying
         df_display = existing_data.copy()
         df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
         st.dataframe(df_display)
-
-
-
 
 elif action == "UPDATE EXISTING ENTRY":
     # Display the original data
