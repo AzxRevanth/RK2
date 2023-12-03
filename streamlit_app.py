@@ -10,7 +10,7 @@ st.markdown("Enter the details of the new student below.")
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 
 # Fetch existing students data
-existing_data = conn.read(worksheet="Sheet1", usecols=list(range(7)), ttl=5)
+existing_data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
 existing_data = existing_data.dropna(how="all")
 
 # Choose an Action
@@ -31,10 +31,9 @@ if action == "DATA VIEWING":
     st.header('DATA VIEWING')
 
     # Calculate the fee due date (next month from the date of joining)
-    existing_data['Fee Due Date'] = existing_data['Date of Joining'] + pd.offsets.MonthBegin(1)
-
-    # Convert 'Fee Due Date' to Timestamp for comparison
-    existing_data['Fee Due Date'] = pd.to_datetime(existing_data['Fee Due Date'])
+    existing_data['Fee Due Date'] = existing_data['Date of Joining'].dt.to_period('M').apply(
+        lambda x: x + 1
+    ).dt.to_timestamp()
 
     # Filter students with fees due in the next month
     due_date_filter = (existing_data['Fee Due Date'] >= pd.Timestamp.today()) & (
@@ -48,60 +47,6 @@ if action == "DATA VIEWING":
         st.dataframe(
             due_students_df[['Student Name', 'Grade', 'Date of Joining', 'Subject', 'Fees', 'Amount Paid', 'Fee Due Date']]
         )
-
-elif action == "DATA ENTRY":
-    # Display the original data
-    st.header('ORIGINAL DATA')
-    st.dataframe(existing_data)
-
-    # Display the data entry form
-    st.header('DATA ENTRY')
-    st.markdown("Enter the details of the new student below.")
-
-    # Take input for new data
-    st.subheader('Enter New Data')
-
-    # Use st.form() to wrap the form elements
-    with st.form(key='my_form'):
-        AdminNo = st.text_input('Admission Number*')
-        student_name = st.text_input('Student Name*')
-        grade = st.text_input('Grade*')
-        date_of_joining = st.date_input('Date of Joining*')
-        subject = st.text_input('Subject*')
-        fees = st.number_input('Fees*')
-        amount_paid = st.number_input('Amount Paid*')
-
-        # Mark mandatory fields
-        st.markdown("**required*")
-
-        # st.form_submit_button should be used inside the st.form() context
-        submit_button = st.form_submit_button(label="Submit Vendor Details")
-
-    if submit_button:
-        # Update the DataFrame with new data
-        new_data = {
-            'AdminNo': [AdminNo],
-            'Student Name': [student_name],
-            'Grade': [grade],
-            'Date of Joining': [pd.to_datetime(date_of_joining)],  # Convert to datetime
-            'Subject': [subject],
-            'Fees': [fees],
-            'Amount Paid': [amount_paid],
-        }
-
-        new_df = pd.DataFrame(new_data)
-        existing_data = pd.concat([existing_data, new_df], ignore_index=True)
-
-        # Display the updated DataFrame
-        st.subheader('Updated Data')
-        st.success("Vendor details successfully submitted!")
-
-        # Convert 'Date of Joining' to string before displaying
-        df_display = existing_data.copy()
-        df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime(
-            '%Y-%m-%d'
-        )
-
         st.dataframe(df_display)
 
 elif action == "UPDATE EXISTING ENTRY":
