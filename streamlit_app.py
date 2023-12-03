@@ -30,10 +30,11 @@ if action == "DATA VIEWING":
     # Display the original data again
     st.header('DATA VIEWING')
 
+    # Ensure 'Date of Joining' is treated as datetime
+    existing_data['Date of Joining'] = pd.to_datetime(existing_data['Date of Joining'])
+
     # Calculate the fee due date (next month from the date of joining)
-    existing_data['Fee Due Date'] = existing_data['Date of Joining'].apply(
-        lambda x: x + pd.DateOffset(months=1)
-    )
+    existing_data['Fee Due Date'] = existing_data['Date of Joining'] + pd.offsets.MonthBegin(1)
 
     # Filter students with fees due in the next month
     due_date_filter = (existing_data['Fee Due Date'] >= pd.Timestamp.today()) & (
@@ -205,6 +206,9 @@ elif action == "FEES DUE NEXT MONTH":
     # Display the fees due next month form
     st.header('FEES DUE NEXT MONTH')
     st.markdown("Select students with fees due next month and update the amount paid.")
+
+    # Ensure 'Date of Joining' is treated as datetime
+    existing_data['Date of Joining'] = pd.to_datetime(existing_data['Date of Joining'])
 
     # Get the current month and year
     current_month = pd.to_datetime('today').month
