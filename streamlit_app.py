@@ -7,7 +7,7 @@ st.title("RK SIR STUDENTS")
 st.markdown("Enter the details of the new student below.")
 
 # Establishing a Google Sheets connection
-conn = st.connection(type=GSheetsConnection)
+conn = GSheetsConnection()
 
 # Fetch existing students data
 existing_data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
