@@ -50,69 +50,70 @@ if action == "DATA VIEWING":
             due_students_df[['Student Name', 'Grade', 'Date of Joining', 'Subject', 'Fees', 'Amount Paid', 'Fee Due Date']]
         )
 
-# Take input for new data
-st.subheader('Enter New Data')
+elif action == "DATA ENTRY":
+    # Take input for new data
+    st.subheader('Enter New Data')
 
-# Use st.form() to wrap the form elements
-with st.form(key='my_form'):
-    AdminNo = st.text_input('Admission Number*')
-    student_name = st.text_input('Student Name*')
-    grade = st.text_input('Grade*')
-    date_of_joining = st.date_input('Date of Joining*')
-    subject = st.text_input('Subject*')
-    fees = st.number_input('Fees*')
-    amount_paid = st.number_input('Amount Paid*')
+    # Use st.form() to wrap the form elements
+    with st.form(key='my_form'):
+        AdminNo = st.text_input('Admission Number*')
+        student_name = st.text_input('Student Name*')
+        grade = st.text_input('Grade*')
+        date_of_joining = st.date_input('Date of Joining*')
+        subject = st.text_input('Subject*')
+        fees = st.number_input('Fees*')
+        amount_paid = st.number_input('Amount Paid*')
 
-    # Mark mandatory fields
-    st.markdown("**required*")
+        # Mark mandatory fields
+        st.markdown("**required*")
 
-    # st.form_submit_button should be used inside the st.form() context
-    submit_button = st.form_submit_button(label="Submit Students Details")
+        # st.form_submit_button should be used inside the st.form() context
+        submit_button = st.form_submit_button(label="Submit Students Details")
 
-# If the submit button is pressed
-if submit_button:
-    # Check if all mandatory fields are filled
-    if not AdminNo or not student_name or not grade or not date_of_joining or not subject or not fees or not amount_paid:
-        st.warning("Ensure all mandatory fields are filled.")
-        st.stop()
+    # If the submit button is pressed
+    if submit_button:
+        # Check if all mandatory fields are filled
+        if not AdminNo or not student_name or not grade or not date_of_joining or not subject or not fees or not amount_paid:
+            st.warning("Ensure all mandatory fields are filled.")
+            st.stop()
 
-    # Convert "Student Name" column to string for checking duplicates
-    existing_data["Student Name"] = existing_data["Student Name"].astype(str)
+        # Convert "Student Name" column to string for checking duplicates
+        existing_data["Student Name"] = existing_data["Student Name"].astype(str)
 
-    # Check if a student with the same name already exists
-    if existing_data["Student Name"].str.contains(student_name).any():
-        st.warning("A student with this name already exists.")
-        st.stop()
-    else:
-        # Ensure 'Date of Joining' is treated as datetime
-        date_of_joining = pd.to_datetime(date_of_joining)
+        # Check if a student with the same name already exists
+        if existing_data["Student Name"].str.contains(student_name).any():
+            st.warning("A student with this name already exists.")
+            st.stop()
+        else:
+            # Ensure 'Date of Joining' is treated as datetime
+            date_of_joining = pd.to_datetime(date_of_joining)
 
-        # Create a new row of student data
-        new_data = {
-            'AdminNo': [AdminNo],
-            'Student Name': [student_name],
-            'Grade': [grade],
-            'Date of Joining': [date_of_joining],
-            'Subject': [subject],
-            'Fees': [fees],
-            'Amount Paid': [amount_paid],
-        }
+            # Create a new row of student data
+            new_data = {
+                'AdminNo': [AdminNo],
+                'Student Name': [student_name],
+                'Grade': [grade],
+                'Date of Joining': [date_of_joining],
+                'Subject': [subject],
+                'Fees': [fees],
+                'Amount Paid': [amount_paid],
+            }
 
-        new_df = pd.DataFrame(new_data)
-        existing_data = pd.concat([existing_data, new_df], ignore_index=True)
+            new_df = pd.DataFrame(new_data)
+            existing_data = pd.concat([existing_data, new_df], ignore_index=True)
 
-        # Save the modified DataFrame back to Google Sheets
-        conn.update(data=existing_data, worksheet="Sheet1")
+            # Save the modified DataFrame back to Google Sheets
+            conn.update(data=existing_data, worksheet="Sheet1")
 
-        # Display the updated DataFrame
-        st.subheader('Updated Data')
-        st.success("Student details successfully submitted!")
+            # Display the updated DataFrame
+            st.subheader('Updated Data')
+            st.success("Student details successfully submitted!")
 
-        # Convert 'Date of Joining' to string before displaying
-        df_display = existing_data.copy()
-        df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
+            # Convert 'Date of Joining' to string before displaying
+            df_display = existing_data.copy()
+            df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
-        st.dataframe(df_display)
+            st.dataframe(df_display)
 
 elif action == "UPDATE EXISTING ENTRY":
     # Display the original data
