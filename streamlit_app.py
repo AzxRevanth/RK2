@@ -10,7 +10,7 @@ st.markdown("Enter the details of the new student below.")
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 
 # Fetch existing students data
-existing_data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
+existing_data = conn.read(worksheet="Sheet1", usecols=list(range(7)), ttl=5)
 existing_data = existing_data.dropna(how="all")
 
 # Choose an Action
