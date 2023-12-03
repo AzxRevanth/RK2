@@ -160,10 +160,10 @@ elif action == "UPDATE EXISTING ENTRY":
         st.success("Vendor details successfully updated!")
 
         # Convert 'Date of Joining' to string before displaying
-        df_display = existing_data.copy()
-        df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime(
-            '%Y-%m-%d'
-        )
+df_display = existing_data.copy()
+if 'Date of Joining' in df_display.columns and pd.api.types.is_datetime64_any_dtype(df_display['Date of Joining']):
+    df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
+
 
         st.dataframe(df_display)
 
