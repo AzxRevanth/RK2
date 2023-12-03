@@ -84,19 +84,20 @@ if action == "DATA ENTRY":
 
         # Update the DataFrame with new data
         new_data = {
-            'AdminNo': AdminNo,
-            'Student Name': student_name,
-            'Grade': grade,
-            'Date of Joining': date_of_joining,
-            'Subject': subject,
-            'Fees': fees,
-            'Amount Paid': amount_paid,
+            'AdminNo': [AdminNo],
+            'Student Name': [student_name],
+            'Grade': [grade],
+            'Date of Joining': [date_of_joining],
+            'Subject': [subject],
+            'Fees': [fees],
+            'Amount Paid': [amount_paid],
         }
 
-        existing_data = existing_data.append(new_data, ignore_index=True)
+        new_df = pd.DataFrame(new_data)
+        existing_data = pd.concat([existing_data, new_df], ignore_index=True)
 
         # Save the modified DataFrame back to Google Sheets
-        conn.write(existing_data, worksheet="Sheet1")
+        conn.df_to_sheet(existing_data, sheet="Sheet1", index=False, sheet_exists="replace")
 
         # Display the updated DataFrame
         st.subheader('Updated Data')
@@ -107,6 +108,7 @@ if action == "DATA ENTRY":
         df_display['Date of Joining'] = df_display['Date of Joining'].dt.strftime('%Y-%m-%d')
 
         st.dataframe(df_display)
+
 
 
 
